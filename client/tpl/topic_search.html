@@ -1,0 +1,45 @@
+<form id="search-form" class="form" role="form">
+    <div class="input-group">
+        <input id="query" type="text" class="form-control" ng-model="query" typeahead="suggestion for suggestion in wpSuggestions($viewValue)"/>
+        <span class="input-group-btn">
+            <button class="btn btn-default" data-loading-text="Searching..." ng-click="wpSearch()">
+                <span class="glyphicon glyphicon-search"></span> Search
+            </button>
+        </span>
+    </div><!-- /input-group -->
+    <div ng-if="searchResult" id="search-results-wp">
+        <h4>Wikipedia</h4>
+        <ul ng-model="search_results" id="search-results" class="list-group">
+            <li ng-repeat="page in searchResult.pages" class="list-group-item">
+                <div class="pull-right">
+                    <span ng-if="page.isAdded" class="label label-default">Added</span>
+                    <button ng-if="!page.isAdded" type="button" class="btn btn-primary btn-xs" ng-click="addTopic(page.title)">
+                        <span class="glyphicon glyphicon-plus"></span> Add
+                    </button>
+                </div>
+                <h4 class="list-group-item-heading">
+                    {{ page.title }}
+                    <span ng-if="page.redirecttitle" class="comment">
+                        &nbsp;(redirect from {{ page.redirecttitle }})
+                    </span>
+                    <span ng-if="page.sectiontitle" class="comment">
+                        &nbsp;(redirect from {{ page.sectiontitle }})
+                    </span>
+                </h4>
+                <p class="list-group-item-text">{{ page.extract }}</p>
+                <p class="list-group-item-text" style="margin-top: 0.5em">
+                    <span ng-if="page.units" style="font-style: italic; margin-right: 0.5em">Also used in</span>
+                    <a ng-repeat="unit in page.units" ui-sref="unit.topics({unit_code: unit})" class="label label-default unit">
+                        {{ unit }}
+                    </a>
+                </p>
+            </li>
+        </ul>
+        <p ng-if="searchResult.numDisambiguationPages" style="text-align: center; font-style: italic; color: #999">Disambiguation pages hidden: {{ searchResult.numDisambiguationPages }}</p>
+        <div ng-if="searchResult" id="custom-topic-suggestion" class="alert alert-info">
+            Didn't find what you were looking for?
+            <a ui-sref="unit.custom_topic({name:query})" class="show-custom-topic">Add custom topic</a>
+        </div>
+    </div>
+    <div id="search-results-custom"></div>
+</form>

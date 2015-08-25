@@ -1,0 +1,7 @@
+<div class="list-group">
+    <a ng-repeat="unit in units" ui-sref="unit.topics({unit_code:unit.code})" class="list-group-item">
+        <span class="unit-code">{{unit.code}}</span>
+        <span class="unit-name">{{unit.name}}</span>
+        <span class="badge">{{unit.num_topics}}</span>
+    </a>
+</div>

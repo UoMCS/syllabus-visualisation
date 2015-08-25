@@ -1,0 +1,12 @@
+<div ng-show="topicLoaded" class="container">
+    <div class="page-header">
+        <ul class="nav nav-pills pull-right">
+            <li><a ui-sref="unit_list"><span class="glyphicon glyphicon-home"></span> Units</a></li>
+        </ul>
+        <h3 style="line-height: 40px">{{ topic.name }}</h3>
+        <div class="clearfix"></div>
+    </div>
+    <div class="graph">
+        <div class="graph" ng-include="'/api/topic/' + topic.id + '/graph'"></div>
+    </div>
+</div> <!-- /.container -->

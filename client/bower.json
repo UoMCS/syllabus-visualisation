@@ -1,0 +1,26 @@
+{
+  "name": "syllabus-visualisation",
+  "version": "0.0.0",
+  "homepage": "https://github.com/UoMCS/syllabus-visualisation",
+  "authors": [
+    "artur-bekasov <artur.bekasov@gmail.com>"
+  ],
+  "description": "Syllabus visualisation",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-bootstrap": "~0.13.3",
+    "angular-ui-bootstrap": "~0.13.3",
+    "angular-ui-notification": "~0.0.14",
+    "angular-ui-router": "~0.2.15",
+    "bootstrap": "~3.3.5",
+    "ng-tags-input": "~3.0.0",
+    "svg-pan-zoom": "~3.2.3"
+  }
+}

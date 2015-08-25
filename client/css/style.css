@@ -1,0 +1,104 @@
+/* Make the masthead heading the same height as the navigation */
+.page-header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+}
+
+.no-topics {
+	text-align: center;
+}
+
+#search-results-wp {
+	margin-top: 20px;
+}
+
+#search-results-nothing {
+	text-align: center;
+}
+
+#custom-topic-suggestion {
+	text-align: center;
+}
+
+.comment {
+	color: #666666;
+}
+
+.unit-code {
+	font-weight: bold;
+}
+
+.label {
+    margin-right: 0.5em;
+}
+
+/* -- Topics table --------- */
+
+.topics-table .glyphicon-check {
+    color: green;
+}
+
+.topics-table .glyphicon-unchecked {
+    color: gray;
+}
+
+.topics-table td {
+    vertical-align: middle !important;
+    position: relative;
+}
+
+.topics-table .name-column {
+    text-align: left;
+    width: 30%;
+}
+
+.topics-table .name-column a.custom_topic {
+    font-style: italic;
+}
+
+.topics-table .context-column {
+    text-align: left;
+    width: 30%;
+}
+
+.topics-table .alias-column {
+    text-align: left;
+    width: 30%;
+}
+
+.topics-table .flag-column {
+    text-align: center;
+}
+
+.topics-table .actions-column {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.topic-row button.hiding {
+    visibility: hidden;
+}
+
+.topic-row:hover button.hiding {
+    visibility: visible;
+}
+
+.graph {
+   position: relative;
+}
+
+svg g[id^=topic] g:nth-of-type(2) a:hover text {
+	fill: LightGreen;
+}
+
+svg g a:hover {
+	text-decoration: none;
+}
+
+svg g a:hover text {
+	fill: LightGreen;
+}
+
+
+/* -- End of Topic table -- */

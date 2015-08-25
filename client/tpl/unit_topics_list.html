@@ -1,0 +1,71 @@
+<div ng-if="contentLoaded" id="topic-list">
+    <table ng-if="unit_topics.length" class="table table-hover topics-table">
+        <tr>
+            <th class="name-column">Topic</th>
+            <th class="alias-column">Alias</th>
+            <th class="context-column">Context</th>
+            <th class="flag-column">Taught</th>
+            <th class="flag-column">Assessed</th>
+            <th class="flag-column">Applied</th>
+            <th class="actions-column"></th>
+        </tr>
+        <tr ng-repeat="unit_topic in unit_topics" class="topic-row">
+
+            <td class="name-column">
+                {{ unit_topic.topic.name }}
+            </td>
+
+            <td class="alias-column">
+                <span ng-if="!unit_topic.isEditing">
+                    {{ unit_topic.alias || '—'}}
+                </span>
+                <span ng-if="unit_topic.isEditing">
+                    <input class="alias form-control" ng-model="unit_topic.alias"/>
+                </span>
+            </td>
+
+            <td class="context-column">
+                <span ng-if="!unit_topic.isEditing">
+                    <span ng-repeat="contextTopic in unit_topic.contexts" class="label label-info">{{ contextTopic.name }}</span>
+                </span>
+                <span ng-if="unit_topic.isEditing">
+                    <tags-input ng-model="unit_topic.contexts" display-property="name" add-from-autocomplete-only="true">
+                        <auto-complete source="context_search($query)"></auto-complete>
+                    </tags-input>
+                </span>
+            </td>
+
+
+            <td ng-repeat="flag in ['is_taught', 'is_assessed', 'is_applied']" ng-class="flag" class="flag-column">
+                <span ng-if="!unit_topic.isEditing"
+                      ng-class="{'glyphicon-check': unit_topic[flag], 'glyphicon-unchecked': !unit_topic[flag]} "
+                      class="glyphicon"></span>
+
+                <span ng-if="unit_topic.isEditing">
+                    <input type="checkbox" ng-class="flag" ng-model="unit_topic[flag]"/>
+                </span>
+            </td>
+
+            <td class="actions-column">
+                <span ng-if="!unit_topic.isEditing">
+                    <button type="button" class="btn btn-info btn-xs hiding" ng-click="edit(unit_topic)">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs hiding" ng-click="remove(unit_topic)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </span>
+                <span ng-if="unit_topic.isEditing">
+                    <button type="button" class="btn btn-success btn-xs" ng-click="save(unit_topic)">
+                        <span class="glyphicon glyphicon-floppy-saved"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs" ng-click="cancel(unit_topic)">
+                        <span class="glyphicon glyphicon-floppy-remove"></span>
+                    </button>
+                </span>
+            </td>
+        </tr>
+    </table>
+    <div ng-if="contentLoaded && !unit_topics.length" class="no-topics alert alert-info">No topics so far. :-(</div>
+</div>
+

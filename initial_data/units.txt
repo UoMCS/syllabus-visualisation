@@ -1,0 +1,46 @@
+COMP10120, First Year Team Project 
+COMP11120, Mathematical Techniques for Computer Science 
+COMP11212, Fundamentals of Computation 
+COMP12111, Fundamentals of Computer Engineering 
+COMP14112, Fundamentals of Artificial Intelligence 
+COMP15111, Fundamentals of Computer Architecture 
+COMP16121, Object Oriented Programming with Java 1 
+COMP16212, Object Oriented Programming with Java 2 
+COMP18112, Fundamentals of Distributed Systems 
+COMP33711, Agile Software Engineering 
+COMP33812, Software Evolution 
+COMP23420, Software Engineering 
+COMP25111, Operating Systems 
+COMP25212, System Architecture 
+COMP35112, Chip Multiprocessors 
+COMP36512, Compilers
+COMP26120, Algorithms and Imperative Programming 
+COMP33512, User Experience 
+BMAN20880, Information Systems and Business Progress Modelling 
+BMAN31561, Business Modelling and Simulation 
+BMAN31592, IT Strategy in Business 
+COMP24111, Machine Learning and Optimisation 
+COMP34120, AI and Games 
+COMP28411, Computer Networks 
+COMP28512, Mobile Systems 
+COMP38411, Cryptography and Network Security 
+COMP38512, Digital Wireless Communication and Networks 
+COMP24412, Symbolic AI 
+COMP34411, Natural Language Systems 
+COMP34512, Knowledge Representation and Reasoning 
+COMP36111, Advanced Algorithms 1 
+COMP36212, Advanced Algorithms II 
+COMP21111, Logic and Modelling 
+COMP31111, Verified Development 
+COMP31212, Concurrency and Process Algebra 
+COMP33411, Software Design using Patterns 
+COMP22111, Processor Microarchitecture 
+COMP32212, Implementing System-on-Chip Designs 
+COMP27112, Computer Graphics and Image Processing 
+COMP37111, Advanced Computer Graphics 
+COMP37212, Computer Vision 
+COMP23111, Fundamentals of Databases 
+COMP28112, Distributed Computing 
+COMP38120, Documents, Services and Data on the Web 
+COMP22712, Microcontrollers
+COMP36411, Understanding Programming Languages 

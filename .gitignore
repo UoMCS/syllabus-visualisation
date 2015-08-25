@@ -1,0 +1,9 @@
+*.py[cod]
+
+.DS_Store
+
+.idea
+
+server.cfg
+
+venv

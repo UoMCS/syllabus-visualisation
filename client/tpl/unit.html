@@ -1,0 +1,10 @@
+<div ng-if="unitLoaded">
+    <div class="clearfix" style="margin-bottom: 10px">
+        <div class="pull-right" ui-view="menu"></div>
+        <h3 style="margin: 0">
+            {{ unit.code }} &mdash; {{unit.name}}
+            <span ui-view="title" style="color: #777"></span>
+        </h3>
+    </div>
+    <div ui-view class="content"></div>
+</div> <!-- /.container -->
