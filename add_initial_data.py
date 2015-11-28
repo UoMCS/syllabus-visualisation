@@ -12,6 +12,7 @@ from flask import Flask
 import openpyxl
 import requests
 
+from server.app import app
 from server.models import *
 from server.api import get_categories
 
@@ -99,22 +100,28 @@ def process_workbook(workbook):
             if concept['Name'] == concept['Concept']:
                 concept['Name'] = None
 
-            topic = None
+            topic, is_topic_new = None, None
 
             if is_custom_concept:
                 topic = db.session.query(CustomTopic).filter_by(name=concept['Concept']).first()
 
-                if not topic: # New topic
+                is_topic_new = not topic
+
+                if is_topic_new:
                     topic = CustomTopic(concept['Concept'])
                     topic.description = 'Added from spreadsheets'
-                    db.session.add(topic)
             else:
                 topic = db.session.query(Topic).filter_by(name=concept['Concept']).first()
 
-                if not topic: # New topic
+                is_topic_new = not topic
+
+                if is_topic_new:
                     topic = Topic(concept['Concept'])
-                    topic.categories = get_categories(topic)
-                    db.session.add(topic)
+                    # topic.categories = get_categories(topic)
+
+            if is_topic_new:
+                db.session.add(topic)
+                db.session.flush()
 
             unit = db.session.query(Unit).filter_by(code=concept['Unit Code']).one()
 
@@ -125,9 +132,7 @@ def process_workbook(workbook):
             unit_topic.is_applied = to_bool(concept['Applied'])
 
             db.session.add(unit_topic)
-            db.session.flush() # So that unit_topic.id is populated
-
-            print(u'{} {}'.format(topic.id,topic.name))
+            db.session.flush()
 
             if concept['Context']:
                 contexts = concept['Context'].split()
@@ -164,12 +169,10 @@ if __name__ == "__main__":
     parser.add_argument('data_dir', help='Directory with initial data')
     args = parser.parse_args()
 
-    app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = args.db_uri 
 
-    db.init_app(app)
-
     with app.app_context():
+        db.drop_all()
         db.create_all()
 
         units_filename = os.path.join(args.data_dir, 'units.txt')

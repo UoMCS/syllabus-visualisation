@@ -2,6 +2,7 @@ from logging import FileHandler
 
 from app import app
 from api import api
+from models import db
 
 app.config.from_pyfile('../server.cfg')
 

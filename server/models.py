@@ -1,8 +1,8 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import ClauseElement
-from app import app
 from sqlalchemy import event
 from sqlalchemy.orm import Session
+from app import app
 
 db = SQLAlchemy(app)
 
@@ -53,11 +53,12 @@ class UnitTopic(db.Model):
         return '<UnitTopic %r %r>' % (self.unit_id, self.topic_id)
 
 # Adapted from http://stackoverflow.com/a/9264556
-@event.listens_for(Session, 'after_flush')
-def delete_topic_orphans(session, ctx):
-    session.query(Topic).\
-        filter(~Topic.unit_topics.any()).\
-        delete(synchronize_session=False)
+# TODO: find a different way
+# @event.listens_for(Session, 'after_flush')
+# def delete_topic_orphans(session, ctx):
+#     session.query(Topic).\
+#         filter(~Topic.unit_topics.any()).\
+#         delete(synchronize_session=False)
 
 class Unit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
