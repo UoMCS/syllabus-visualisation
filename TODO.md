@@ -1,10 +1,9 @@
 # TODO
 
-- Remove orphan topics when deleting unit topics 
 - Categories
-- Unit color-coding
-- Better graph colors
+- Loading indicators
+
+- Remove orphan topics when deleting unit topics 
 
 - Topic keywords
-- Loading indicators
 

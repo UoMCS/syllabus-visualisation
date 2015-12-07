@@ -3,6 +3,7 @@ from sqlalchemy.sql.expression import ClauseElement
 from sqlalchemy import event
 from sqlalchemy.orm import Session
 from app import app
+import re
 
 db = SQLAlchemy(app)
 
@@ -72,6 +73,9 @@ class Unit(db.Model):
 
     def __repr__(self):
         return "<Unit %r %r>" % (self.code, self.name)
+
+    def get_year(self):
+        return int(re.search("\d", self.code).group(0))
 
 topic_category = db.Table('topic_category', db.Model.metadata,
     db.Column('topic_id', db.Integer, db.ForeignKey('topic.id')),

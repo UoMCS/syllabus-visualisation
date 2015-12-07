@@ -1,16 +1,27 @@
 {
-    "unit": {
+    "unit_default": {
         "fixedsize": true,
         "style": "filled", 
         "width": 1.8, 
         "height": 1.8, 
         "fontname": "Helvetica",
         "fontcolor": "white",
-        "color": "black", 
         "shape": "doublecircle"
     },
+    "unit_1": {
+        "inherit": "unit_default",
+        "color": "#999999FF" 
+    },
+    "unit_2": {
+        "inherit": "unit_default",
+        "color": "#666666FF" 
+    },
+    "unit_3": {
+        "inherit": "unit_default",
+        "color": "#333333FF" 
+    },
     "central_unit": {
-        "inherit": "unit",
+        "inherit": "unit_default",
         "color": "red"
     },
     "topic" : {

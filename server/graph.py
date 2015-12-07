@@ -4,6 +4,7 @@ import textwrap
 from flask import Flask
 import json
 import os
+import copy
 
 class SyllabusGraph(pgv.AGraph):
 
@@ -16,13 +17,21 @@ class SyllabusGraph(pgv.AGraph):
             self.style = json.loads(f.read())
             for key in self.style:
                 if 'inherit' in self.style[key]:
-                    inherit_key = self.style[key]['inherit']
-                    self.style[key] = dict(self.style[key], **self.style[inherit_key])
+                    parent = self.style[key]['inherit']
+                    overwrites = self.style[key]
+                    overwrites.pop('inherit', None)
+                    self.style[key] = copy.deepcopy(self.style[parent])
+                    self.style[key].update(overwrites)
 
     def add_unit_node(self, unit, is_central=False):
         wrapped_name = textwrap.fill(unit.name, width = 15)
 
-        style = self.style['central_unit'] if is_central else self.style['unit']
+        style = None
+
+        if is_central:
+            style = self.style['central_unit']
+        else: 
+            style = self.style['unit_' + str(unit.get_year())]
 
         node_name = "unit_{}".format(unit.id)
 
