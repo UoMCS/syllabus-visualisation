@@ -1,0 +1,46 @@
+{
+    "unit": {
+        "fixedsize": true,
+        "style": "filled", 
+        "width": 1.8, 
+        "height": 1.8, 
+        "fontname": "Helvetica",
+        "fontcolor": "white",
+        "color": "black", 
+        "shape": "doublecircle"
+    },
+    "central_unit": {
+        "inherit": "unit",
+        "color": "red"
+    },
+    "topic" : {
+        "style": "filled, rounded",
+        "fontname": "Helvetica",
+        "fontcolor": "white",
+        "color": "#105060FF",
+        "shape" : "box"
+    },
+    "central_topic" : {
+        "inherit" : "topic",
+        "color" : "red"
+    },
+    "edge" : {
+        "color": "#00000030",
+        "headclip": false,
+        "tailclip": false
+    },
+    "category_edge" : {
+        "inherit" : "edge",
+        "style" : "invis",
+        "len" : 0.4
+    },
+    "category" : {
+        "fontname": "Helvetica",
+        "fontcolor": "black",
+        "fillcolor": "#FFEEFF", 
+        "color": "#500050",
+        "style": "filled",
+        "fixedsize": true,
+        "shape": "circle"
+    }
+}

@@ -1,60 +1,28 @@
 import pygraphviz as pgv
 from lxml import etree
 import textwrap
-from flask import url_for
+from flask import Flask
+import json
+import os
 
 class SyllabusGraph(pgv.AGraph):
-
-    UNIT_STYLE = {
-        'fixedsize': True,
-        'style': 'filled', 
-        'width': 1.8, 
-        'height': 1.8, 
-        'fontname': 'Helvetica',
-        'fontcolor': 'white',
-        'color': 'black', 
-        'shape': 'doublecircle'
-    }
-
-    CENTRAL_UNIT_STYLE = dict(UNIT_STYLE, color='red')
-
-    TOPIC_STYLE = {
-        'style': 'filled, rounded',
-        'fontname': 'Helvetica',
-        'fontcolor': 'white',
-        'color': '#105060FF',
-        'shape' : 'box'
-    }
-
-    CENTRAL_TOPIC_STYLE = dict(TOPIC_STYLE, color='red')
-
-    EDGE_STYLE = {
-        'color': '#00000030',
-        'headclip': 'false',
-        'tailclip': 'false'
-    }
-
-    CATEGORY_EDGE_STYLE = dict(EDGE_STYLE, style='invis', len=0.4)
-
-    CATEGORY_STYLE = {
-        'fontname': 'Helvetica',
-        'fontcolor': 'black',
-        'fillcolor: '#FFEEFF', 
-        'color': '#500050',
-        'style': 'filled',
-        'fixedsize': True,
-        'shape': 'circle',
-    }
 
     def __init__(self, is_embedded=False):
         super(SyllabusGraph,self).__init__(overlap='false', outputorder='edgesfirst')
 
         self.is_embedded = is_embedded
+        d = os.path.dirname(os.path.abspath(__file__))
+        with open(d + '/graph_style.json') as f:
+            self.style = json.loads(f.read())
+            for key in self.style:
+                if 'inherit' in self.style[key]:
+                    inherit_key = self.style[key]['inherit']
+                    self.style[key] = dict(self.style[key], **self.style[inherit_key])
 
     def add_unit_node(self, unit, is_central=False):
         wrapped_name = textwrap.fill(unit.name, width = 15)
 
-        style = self.CENTRAL_UNIT_STYLE if is_central else self.UNIT_STYLE
+        style = self.style['central_unit'] if is_central else self.style['unit']
 
         node_name = "unit_{}".format(unit.id)
 
@@ -93,7 +61,7 @@ class SyllabusGraph(pgv.AGraph):
                 topic.id,
                 topic.name)
 
-        style = self.CENTRAL_TOPIC_STYLE if is_central else self.TOPIC_STYLE
+        style = self.style['central_topic'] if is_central else self.style['topic']
 
         node_name = self.topic_node_name(topic)
 
@@ -105,10 +73,10 @@ class SyllabusGraph(pgv.AGraph):
         return node_name
 
     def add_edge(self, source, target):
-        super(SyllabusGraph, self).add_edge(source, target, **self.EDGE_STYLE)
+        super(SyllabusGraph, self).add_edge(source, target, **self.style['edge'])
 
     def add_invisible_edge(self, source, target):
-        super(SyllabusGraph, self).add_edge(source, target, **self.CATEGORY_EDGE_STYLE)
+        super(SyllabusGraph, self).add_edge(source, target, **self.style['category'])
 
     def render_svg(self):
         self.layout(prog='neato')
