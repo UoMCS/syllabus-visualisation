@@ -8,31 +8,24 @@ from graph import SyllabusGraph
 
 import json
 import urllib
+from collections import Counter
 
 def svg_response(svg):
     return Response(svg, mimetype='image/svg+xml')
 
-# def addCategoryNodes(g, db, topic_ids):
-#     query = """ SELECT *
-#                 FROM topic_categories
-#                 WHERE topic_id IN ({});
-#             """
-#
-#     query = query.format(','.join('?' * len(topic_ids)))
-#
-#     categories = db.execute(query, topic_ids).fetchall()
-#
-#     category_topics = {}
-#     for c in categories:
-#         category_topics.setdefault(c['category'], set()).add(c['topic_id'])
-#
-#     for category in category_topics:
-#         if len(category_topics[category]) > 1:
-#             g.add_category_node(category, len(category_topics[category]))
-#
-#             for topic in category_topics[category]:
-#                 g.add_invisible_edge(category, topic)
+def addCategoryNodes(g, topics):
+    category_topics = {}
 
+    for topic in topics:
+        for category in topic.categories:
+            category_topics.setdefault(category, set()).add(topic)
+
+    for category in category_topics:
+        if len(category_topics[category]) > 1:
+            category_node = g.add_category_node(category, len(category_topics[category]))
+
+            for topic in category_topics[category]:
+                g.add_category_edge(category_node, SyllabusGraph.topic_node_name(topic))
 
 api = Blueprint('syl_vis_api', __name__)
 
@@ -132,6 +125,7 @@ def get_categories(topic):
         existing_names = map(lambda x: x.name, existing_categories)
 
         new_categories = [Category(name) for name in category_names if name not in existing_names]
+        map(db.session.add, new_categories)
 
         return existing_categories + new_categories
     else:
@@ -162,9 +156,6 @@ def add_unit_topic():
 
         db.session.add(topic)
         db.session.flush() # So that we have access to id
-
-    if is_new and topic.type == 'topic':
-        pass # TODO: categories = fetch_categories(topic_name)
 
     unit_code = args["unit_code"]
     unit = db.session.query(Unit).filter_by(code=unit_code).one()
@@ -259,9 +250,7 @@ def units_graph():
             unit_node = g.add_unit_node(unit_topic.unit)
             g.add_edge(unit_node, topic_node)
 
-    graph = g.render_svg()
-
-    return svg_response(graph)
+    return svg_response(g.render_svg())
 
 @api.route("/graph/unit/<string:unit_code>")
 def unit_graph(unit_code):
@@ -281,7 +270,7 @@ def unit_graph(unit_code):
             related_unit_node = g.add_unit_node(related_unit_topic.unit)
             g.add_edge(related_unit_node, topic_node)
 
-    # TODO: addCategoryNodes(g, db, [item["topic_id"] for item in items])
+    addCategoryNodes(g, [ut.topic for ut in unit.unit_topics])
 
     return svg_response(g.render_svg())
 
@@ -295,6 +284,8 @@ def topic_graph(topic_id):
     raw_svg = request.args.has_key('svg')
     g = SyllabusGraph(raw_svg)
     topic_node = g.add_topic_node(topic, True)
+    addCategoryNodes(g, [topic])
+
     for unit_topic in topic.unit_topics:
         unit_node = g.add_unit_node(unit_topic.unit)
         g.add_edge(unit_node, topic_node)
@@ -303,8 +294,6 @@ def topic_graph(topic_id):
             related_topic_node = g.add_topic_node(related_unit_topic.topic)
             g.add_edge(unit_node, related_topic_node)
 
-    # TODO: addCategoryNodes(g, db, [item["topic_id"] for item in items])
+        addCategoryNodes(g, [ut.topic for ut in unit_topic.unit.unit_topics])
 
-    svg = g.render_svg()
-
-    return svg_response(svg)
+    return svg_response(g.render_svg())

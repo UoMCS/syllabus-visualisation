@@ -43,17 +43,21 @@ class SyllabusGraph(pgv.AGraph):
 
         return node_name
 
-    def add_category_node(self, name, weight):
-        label = name.split(":",1)[1]
+    def add_category_node(self, category, weight):
+        label = category.name.split(":",1)[1]
         label = '\n'.join(textwrap.wrap("%s" % label,  width = 15))
 
-        self.add_node(name, 
-            id="category_" + self._hashed(name), 
+        node_name = "category_{}".format(category.id)
+
+        self.add_node(node_name, 
+            id=node_name,
             label=label,
             width=1.7+((weight-1)*0.5), 
             fontsize=14+(weight-1),
             # URL=url_for('category_page', category=name),
-            **self.CATEGORY_STYLE)
+            **self.style['category'])
+
+        return node_name
 
     def add_topic_node(self, topic, is_central=False):
         label = None
@@ -84,8 +88,8 @@ class SyllabusGraph(pgv.AGraph):
     def add_edge(self, source, target):
         super(SyllabusGraph, self).add_edge(source, target, **self.style['edge'])
 
-    def add_invisible_edge(self, source, target):
-        super(SyllabusGraph, self).add_edge(source, target, **self.style['category'])
+    def add_category_edge(self, source, target):
+        super(SyllabusGraph, self).add_edge(source, target, **self.style['category_edge'])
 
     def render_svg(self):
         self.layout(prog='neato')

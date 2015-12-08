@@ -117,7 +117,7 @@ def process_workbook(workbook):
 
                 if is_topic_new:
                     topic = Topic(concept['Concept'])
-                    # topic.categories = get_categories(topic)
+                    topic.categories = get_categories(topic)
 
             if is_topic_new:
                 db.session.add(topic)
@@ -132,7 +132,7 @@ def process_workbook(workbook):
             unit_topic.is_applied = to_bool(concept['Applied'])
 
             db.session.add(unit_topic)
-            db.session.flush()
+            db.session.commit()
 
             if concept['Context']:
                 contexts = concept['Context'].split()
