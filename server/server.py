@@ -10,13 +10,13 @@ app.config.from_pyfile('../server.cfg')
 
 @app.route("/edit_graph_style", methods=['GET','POST'])
 def edit_graph_style():
-    filename = os.path.dirname(os.path.abspath(__file__)) + "/graph_style.json"
+    style_path = app.config['GRAPH_STYLE_PATH']
 
     if request.method == 'POST':
-        with open(filename, 'w') as f:
+        with open(style_path, 'w') as f:
             f.write(request.form['text'])
 
-    with open(filename) as f:
+    with open(style_path) as f:
         return """
                <form method="POST">
                <textarea name="text" style="width: 800; height: 600">{0}</textarea>
