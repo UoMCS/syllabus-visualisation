@@ -242,7 +242,7 @@ def units_graph():
 
     raw_svg = request.args.has_key('svg')
 
-    g = SyllabusGraph(raw_svg)
+    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
     for topic in topics:
         topic_node = g.add_topic_node(topic)
 
@@ -259,7 +259,7 @@ def unit_graph(unit_code):
 
     raw_svg = request.args.has_key('svg')
 
-    g = SyllabusGraph(raw_svg)
+    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
     unit_node = g.add_unit_node(unit, unit.code == unit_code)
     for unit_topic in unit.unit_topics:
         topic_node = g.add_topic_node(unit_topic.topic)
@@ -282,7 +282,7 @@ def topic_graph(topic_id):
     topic = db.session.query(Topic).get(topic_id)
 
     raw_svg = request.args.has_key('svg')
-    g = SyllabusGraph(raw_svg)
+    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
     topic_node = g.add_topic_node(topic, True)
     addCategoryNodes(g, [topic])
 

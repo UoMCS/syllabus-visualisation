@@ -8,12 +8,12 @@ import copy
 
 class SyllabusGraph(pgv.AGraph):
 
-    def __init__(self, is_embedded=False):
+    def __init__(self, style_path, is_embedded=False):
         super(SyllabusGraph,self).__init__(overlap='false', outputorder='edgesfirst')
 
         self.is_embedded = is_embedded
-        d = os.path.dirname(os.path.abspath(__file__))
-        with open(d + '/graph_style.json') as f:
+        
+        with open(style_path) as f:
             self.style = json.loads(f.read())
             for key in self.style:
                 if 'inherit' in self.style[key]:
