@@ -12,7 +12,7 @@ class SyllabusGraph(pgv.AGraph):
         super(SyllabusGraph,self).__init__(overlap='false', outputorder='edgesfirst')
 
         self.is_embedded = is_embedded
-        
+
         with open(style_path) as f:
             self.style = json.loads(f.read())
             for key in self.style:
@@ -54,7 +54,7 @@ class SyllabusGraph(pgv.AGraph):
             label=label,
             width=1.7+((weight-1)*0.5), 
             fontsize=14+(weight-1),
-            # URL=url_for('category_page', category=name),
+            URL='#/graph/category/{}'.format(category.id),
             **self.style['category'])
 
         return node_name

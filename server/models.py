@@ -89,7 +89,8 @@ class Topic(db.Model):
 
     unit_topics = db.relationship(UnitTopic, backref=db.backref('topic'))
 
-    categories = db.relationship("Category", secondary=topic_category)
+    categories = db.relationship("Category", backref=db.backref('topics'), 
+        secondary=topic_category)
 
     type = db.Column(db.String(20))
 

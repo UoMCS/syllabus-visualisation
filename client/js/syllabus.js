@@ -277,8 +277,18 @@ app.controller('topic_graph', ($scope, $stateParams, api) => {
     });
 });
 
+app.controller('category_graph', ($scope, $stateParams, api) => {
+    let categoryId = $stateParams.category_id;
+
+    api.fetchGraph(`api/graph/category/${categoryId}`).then(svg => {
+        $scope.svg = svg;
+    });
+});
+
 app.config(($stateProvider, $urlRouterProvider) => {
     $urlRouterProvider.otherwise("/");
+
+    let graphTemplate = '<div style="height:100%" ng-bind-html="svg"></div>';
 
     $stateProvider
         .state('main', {
@@ -294,17 +304,22 @@ app.config(($stateProvider, $urlRouterProvider) => {
         .state('graph.all', {
             url: '/',
             controller: 'main_graph',
-            template: '<div style="height:100%" ng-bind-html="svg"></div>'
+            template: graphTemplate
         })
         .state('graph.topic', {
             url: '/topic/:topic_id',
             controller: 'topic_graph',
-            template: '<div style="height:100%" ng-bind-html="svg"></div>'
+            template: graphTemplate
         })
         .state('graph.unit', {
             url: '/unit/:unit_code',
             controller: 'unit_graph',
             templateUrl:'tpl/unit_graph.html'
+        })
+        .state('graph.category', {
+            url: '/category/:category_id',
+            controller: 'category_graph',
+            template: graphTemplate
         })
         .state('units_list', {
             url: '/',

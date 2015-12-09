@@ -31,7 +31,6 @@ api = Blueprint('syl_vis_api', __name__)
 
 @api.route("/units")
 def units():
-    """ Main page """
     units = Unit.query.all()
 
     unit_schema = UnitSchemaWithCount(many=True)
@@ -41,7 +40,6 @@ def units():
 
 @api.route("/unit/<string:unit_code>", methods=['GET'])
 def unit(unit_code):
-    """ Unit page """
     unit = Unit.query.filter_by(code=unit_code).one()
 
     unit_schema = UnitSchema()
@@ -50,7 +48,6 @@ def unit(unit_code):
 
 @api.route("/unit_topics", methods=['GET'])
 def unit_topics():
-    """ Unit page """
     query = db.session.query(UnitTopic).join(Unit).join(Topic)
 
     # TODO: find by unit_id, topic_id
@@ -86,7 +83,6 @@ def unit_topics():
 
 @api.route("/topic/<string:topic_id>")
 def topic(topic_id):
-    """ Topic page """
 
     topic = db.session.query(Topic).get(topic_id)
 
@@ -133,7 +129,6 @@ def get_categories(topic):
 
 @api.route("/unit_topics/add", methods=['POST'])
 def add_unit_topic():
-    """ Add syllabus item """
 
     args = request.get_json()
 
@@ -170,7 +165,6 @@ def add_unit_topic():
 
 @api.route("/unit_topics/update", methods=['POST'])
 def update_unit_topic():
-    """ Update unit topic """
     args = request.get_json()
 
     unit_topic = db.session.query(UnitTopic).get(args['id'])
@@ -189,7 +183,6 @@ def update_unit_topic():
 
 @api.route("/unit_topics/remove", methods=['POST'])
 def remove_syllabus_item():
-    """ Removes syllabus item """
 
     # Find the topic needs removed
     unit_topic_id = (request.get_json())['unit_topic_id']
@@ -201,43 +194,8 @@ def remove_syllabus_item():
 
     return ''
 
-# @api.route("/category/<string:category>")
-# @auto.doc()
-# def category_page(category):
-#     """ Category page """
-#     db = connectToDB()
-
-#     query = """
-#         SELECT topic_id, unit_code, unit_name
-#         FROM syllabus
-#         JOIN units USING (unit_code)
-#         WHERE topic_id IN
-#             (SELECT topic_id
-#              FROM topic_categories
-#              WHERE category=?);
-#     """
-
-#     items = db.execute(query, (category,)).fetchall()
-
-
-#     raw_svg = request.args.has_key('svg')
-#     g = SyllabusGraph(raw_svg)
-#     g.add_category_node(category, len(items))
-#     for item in items:
-#         g.add_unit_node(item["unit_code"], item["unit_name"])
-#         g.add_topic_node(item["topic_id"])
-#         g.add_edge(item["unit_code"], item["topic_id"])
-#         g.add_edge(item["topic_id"], category)
-#     svg = g.render_svg()
-
-#     if raw_svg:
-#         return svg_responce(svg)
-#     else:
-#         return render_template('category_graph.html', category=category, graph=svg)
-
 @api.route("/graph")
 def units_graph():
-    """ Main graph """
     topics = db.session.query(Topic).all()
 
     raw_svg = request.args.has_key('svg')
@@ -254,7 +212,6 @@ def units_graph():
 
 @api.route("/graph/unit/<string:unit_code>")
 def unit_graph(unit_code):
-    """ Unit graph """
     unit = db.session.query(Unit).filter_by(code=unit_code).one()
 
     raw_svg = request.args.has_key('svg')
@@ -277,7 +234,6 @@ def unit_graph(unit_code):
 
 @api.route("/graph/topic/<string:topic_id>")
 def topic_graph(topic_id):
-    """ Topic page """
 
     topic = db.session.query(Topic).get(topic_id)
 
@@ -295,5 +251,25 @@ def topic_graph(topic_id):
             g.add_edge(unit_node, related_topic_node)
 
         addCategoryNodes(g, [ut.topic for ut in unit_topic.unit.unit_topics])
+
+    return svg_response(g.render_svg())
+
+@api.route("/graph/category/<string:category_id>")
+def category_graph(category_id):
+
+    category = db.session.query(Category).get(category_id)
+
+    raw_svg = request.args.has_key('svg')
+    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
+
+    category_node = g.add_category_node(category, len(category.topics))
+
+    for topic in category.topics:
+        topic_node = g.add_topic_node(topic)
+        g.add_category_edge(category_node, topic_node)
+
+        for unit_topic in topic.unit_topics:
+            unit_node = g.add_unit_node(unit_topic.unit)
+            g.add_edge(unit_node, topic_node)
 
     return svg_response(g.render_svg())

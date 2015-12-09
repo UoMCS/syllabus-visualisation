@@ -20,12 +20,17 @@ To install, do the following:
 1. Clone the repository
 2. Install pip dependencies from `server/requirements.txt` (preferably, using virtualenv)
 3. Install bower dependencies to `client/components` using `client/bower.json`
-4. Run babel to compile `client/js` to `client/js_dist/syllabus.js`
+4. Run babel to compile JS:
+
+   ``` 
+   babel -o client/js_dist/syllabus.js client/js 
+   ```
 5. Create `server.cfg`, setting `SQLALCHEMY_DATABASE_URI` variable, which specifies the database to use**
 
 For debugging, run:
-
-```python server/debug.py```
+``` 
+python server/debug.py 
+```
 
 This will run standalone Flask server, which you can connect to locally.
 
