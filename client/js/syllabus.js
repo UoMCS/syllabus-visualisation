@@ -379,5 +379,12 @@ app.config(($stateProvider, $urlRouterProvider) => {
 
 function enableSVGInteraction() {
     let svgElements = document.querySelector('svg');
-    svgElements && svgPanZoom(svgElements);
+    svgElements && svgPanZoom(svgElements, { 
+        panEnabled: true,
+        controlIconsEnabled: true,
+        zoomEnabled: true,
+        dblClickZoomEnabled: true,
+        mouseWheelZoomEnabled: true,
+        preventMouseEventsDefault: true
+    });
 }

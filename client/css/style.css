@@ -88,6 +88,10 @@
    position: relative;
 }
 
+svg text {
+    text-rendering: optimizeSpeed;
+}
+
 svg g[id^=topic] g:nth-of-type(2) a:hover text {
 	fill: LightGreen;
 }
