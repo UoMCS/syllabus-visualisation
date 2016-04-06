@@ -184,12 +184,15 @@ def update_unit_topic():
 @api.route("/unit_topics/remove", methods=['POST'])
 def remove_syllabus_item():
 
-    # Find the topic needs removed
     unit_topic_id = (request.get_json())['unit_topic_id']
     unit_topic = db.session.query(UnitTopic).get(unit_topic_id)
 
-    # Remove it
     db.session.delete(unit_topic)
+
+    # If topic doesn't relate to more units -- delete it as well
+    if len(unit_topic.topic.unit_topics) == 0:
+        db.session.delete(unit_topic.topic)
+
     db.session.commit()
 
     return ''
