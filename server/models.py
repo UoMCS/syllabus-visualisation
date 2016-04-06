@@ -75,7 +75,9 @@ class Unit(db.Model):
         return "<Unit %r %r>" % (self.code, self.name)
 
     def get_year(self):
-        return int(re.search("\d", self.code).group(0))
+        return 1
+        #TODO: only for UoM, do
+        #return int(re.search("\d", self.code).group(0))
 
 topic_category = db.Table('topic_category', db.Model.metadata,
     db.Column('topic_id', db.Integer, db.ForeignKey('topic.id')),
