@@ -11,3 +11,4 @@ SQLAlchemy==1.0.8
 Werkzeug==0.10.4
 requests==2.7.0
 lxml==3.2.1
+sqlalchemy-utils==0.32.9

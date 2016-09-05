@@ -1,0 +1,23 @@
+<h2>Add institution</h2>
+<form>
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" placeholder="Name" ng-model="ngDialogData.name" value="" />
+    </div>
+    <div class="form-group">
+        <label for="uri">URI:</label>
+        <input type="text" class="form-control" id="uri" placeholder="URI" ng-model="ngDialogData.uri" value="" />
+    </div>
+    <div class="form-group">
+        <label for="user">Admin username:</label>
+        <input type="text" class="form-control" id="user" placeholder="Username" ng-model="ngDialogData.user" value="" />
+    </div>
+    <div class="form-group">
+        <label for="pass">Admin password:</label>
+        <input type="password" class="form-control" id="pass" placeholder="Password" ng-model="ngDialogData.pass" value="" />
+    </div>
+    <div class="ngdialog-buttons">
+        <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click=confirm("OK")>OK</button>
+        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click=closeThisDialog("Cancel")>Cancel</button>
+    </div>
+</div>

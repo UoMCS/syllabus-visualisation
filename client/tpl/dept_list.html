@@ -1,0 +1,9 @@
+<div class="list-group">
+    <h2>{{institution.name}}</h2>
+    <a ng-repeat="department in departments" ng-click="setDepartment(department)" ui-sref="department.units_list({inst_uri:institution.uri, dept_uri:department.uri})" class="list-group-item">
+        <span class="unit-name">{{department.name}}</span>
+        <!--
+        <span class="badge">{{unit.num_topics}}</span>
+        -->
+    </a>
+</div>

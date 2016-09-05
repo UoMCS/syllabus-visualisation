@@ -1,0 +1,15 @@
+<h2>Login</h2>
+<form name="loginform">
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" id="username" placeholder="Username" ng-model="ngDialogData.user" value="" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" ng-model="ngDialogData.pass" value="" />
+    </div>
+    <div class="ngdialog-buttons">
+        <button type="submit" class="ngdialog-button ngdialog-button-primary" ng-click=confirm("OK")>OK</button>
+        <button type="button" class="ngdialog-button ngdialog-button-secondary" ng-click=closeThisDialog("Cancel")>Cancel</button>
+    </div>
+</div>

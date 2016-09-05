@@ -33,6 +33,16 @@
     margin-right: 0.5em;
 }
 
+[ng-click],
+[data-ng-click],
+[x-ng-click] {
+    cursor: pointer;
+}
+
+[ui-sref] {
+    cursor: pointer;
+}
+
 /* -- Topics table --------- */
 
 .topics-table .glyphicon-check {
@@ -88,6 +98,10 @@
    position: relative;
 }
 
+.graph-small, .graph-small .graph {
+   height: 40em;
+}
+
 svg text {
     text-rendering: optimizeSpeed;
 }
@@ -106,3 +120,37 @@ svg g a:hover text {
 
 
 /* -- End of Topic table -- */
+
+.editbuttons {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    line-height: 1;
+    float: right;
+}
+
+.list-group-item {
+    overflow: auto;
+}
+
+.dropdown-menu { width: 100%; }
+
+
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}

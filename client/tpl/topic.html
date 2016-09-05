@@ -1,12 +1,16 @@
 <div ng-show="topicLoaded" class="container">
-    <div class="page-header">
-        <ul class="nav nav-pills pull-right">
-            <li><a ui-sref="unit_list"><span class="glyphicon glyphicon-home"></span> Units</a></li>
+    <h3 style="line-height: 40px">{{ topic.name }}</h3>
+    <blockquote>
+        <p>{{ info.extract }}</p>
+        <ul>
+            <li ng-repeat="category in topic.categories">
+                <a href="{{ category.url }}">{{ category.name }}</a>
+                <a ng-repeat="unit in category.units" ui-sref="department.unit({unit_code: unit})" class="label label-default unit">
+                    {{ unit }}
+                </a>
+            </li>
         </ul>
-        <h3 style="line-height: 40px">{{ topic.name }}</h3>
-        <div class="clearfix"></div>
-    </div>
-    <div class="graph">
-        <div class="graph" ng-include="'/api/topic/' + topic.id + '/graph'"></div>
-    </div>
+        <small>Read more at <a href="{{ info.link }}">Wikipedia</a></small>
+    </blockquote>
+    <div ng-if="exists" class="graph-small" ng-include="'/api/'+inst_uri+'/'+dept_uri+'/graph/topic_route/' + topic.id"></div>
 </div> <!-- /.container -->

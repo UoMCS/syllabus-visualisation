@@ -1,6 +1,12 @@
 <form id="search-form" class="form" role="form">
     <div class="input-group">
-        <input id="query" type="text" class="form-control" ng-model="query" typeahead="suggestion for suggestion in wpSuggestions($viewValue)"/>
+        <input id="query" type="text" 
+            class="form-control form-control ui-select-toggle" 
+            ng-model="query" 
+            typeahead="suggestion for suggestion in wpSuggestions($viewValue)" 
+            style="text-align: left;" 
+            placeholder="Search">
+        </input>
         <span class="input-group-btn">
             <button class="btn btn-default" data-loading-text="Searching..." ng-click="wpSearch()">
                 <span class="glyphicon glyphicon-search"></span> Search
@@ -29,7 +35,7 @@
                 <p class="list-group-item-text">{{ page.extract }}</p>
                 <p class="list-group-item-text" style="margin-top: 0.5em">
                     <span ng-if="page.units" style="font-style: italic; margin-right: 0.5em">Also used in</span>
-                    <a ng-repeat="unit in page.units" ui-sref="unit.topics({unit_code: unit})" class="label label-default unit">
+                    <a ng-repeat="unit in page.units" ui-sref="department.unit.topics({unit_code: unit})" class="label label-default unit">
                         {{ unit }}
                     </a>
                 </p>

@@ -1,0 +1,9 @@
+<fieldset class="form-group">
+    <label for="department_sel">Department</label>
+    <ui-select id="department_sel" ng-model="ctrl.deptsel" theme="bootstrap">
+        <ui-select-match placeholder="Select department">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="dept in where.depts | filter: $select.search">
+            <span ng-bind-html="dept.name | highlight: $select.search"></span>
+        </ui-select-choices>
+    </ui-select>
+</fieldset>

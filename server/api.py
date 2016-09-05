@@ -1,278 +1,72 @@
-from flask import *
+from flask import jsonify,Blueprint
 
-# NB: Order is important
-from models import *
-from schemas import *
+from models import Institution,Department
+from schemas import DepartmentGroupedSchema,DepartmentSchema,InstitutionSchema
 
-from graph import SyllabusGraph
-
-import json
-import urllib
-from collections import Counter
-
-def svg_response(svg):
-    return Response(svg, mimetype='image/svg+xml')
-
-def addCategoryNodes(g, topics):
-    category_topics = {}
-
-    for topic in topics:
-        for category in topic.categories:
-            category_topics.setdefault(category, set()).add(topic)
-
-    for category in category_topics:
-        if len(category_topics[category]) > 1:
-            category_node = g.add_category_node(category, len(category_topics[category]))
-
-            for topic in category_topics[category]:
-                g.add_category_edge(category_node, SyllabusGraph.topic_node_name(topic))
 
 api = Blueprint('syl_vis_api', __name__)
 
-@api.route("/units")
-def units():
-    units = Unit.query.all()
 
-    unit_schema = UnitSchemaWithCount(many=True)
+def get_department_id(institution_uri, department_uri):
+    department = Department.query.join(Institution).\
+    filter(Institution.uri == institution_uri).\
+    filter(Department.uri == department_uri).one()
 
-    return jsonify({'units': unit_schema.dump(units).data})
+    return department.id
 
 
-@api.route("/unit/<string:unit_code>", methods=['GET'])
-def unit(unit_code):
-    unit = Unit.query.filter_by(code=unit_code).one()
+def get_institution_id(institution_uri):
+    institution = Institution.query.\
+    filter(Institution.uri == institution_uri).one()
 
-    unit_schema = UnitSchema()
+    return institution.id
 
-    return jsonify({'unit': unit_schema.dump(unit).data})
 
-@api.route("/unit_topics", methods=['GET'])
-def unit_topics():
-    query = db.session.query(UnitTopic).join(Unit).join(Topic)
+import api_graph
+import api_admin
+import api_unit
+import api_topic
 
-    # TODO: find by unit_id, topic_id
 
-    if 'unit_code' in request.args:
-        unit_code = request.args['unit_code'].split('|')
-        query = query.filter(Unit.code.in_(unit_code)).order_by(Topic.name)
+@api.route("/departments_group", methods=['GET'])
+def departments_group():
+    departments = Institution.query.all()
+    dept_schema = DepartmentGroupedSchema(many=True)
 
-    if 'topic_name' in request.args:
-        topic_name = request.args['topic_name'].split('|')
-        query = query.filter(Topic.name.in_(topic_name)).order_by(Unit.name)
+    data = dept_schema.dump(departments).data
+    # filter out the admin institution/departments
+    data = [ins for ins in data if ins['uri'] != 'admin']
+    for i in data:
+        i['departments'][:] = [dep for dep in i['departments'] if dep['uri'] != 'admin']
 
-    unit_topics = query.all()
+    return jsonify({'institutions': data})
 
-    schema_fields = {}
 
-    if 'embed' in request.args:
-        embed = request.args['embed'].split(',')
+@api.route("/<string:institution_url>/departments", methods=['GET'])
+def get_departments(institution_url):
+    departments = Department.query.join(Institution).\
+    filter(Institution.uri == institution_url).\
+    filter(Department.uri != "admin").all()
 
-        if 'topic' in embed:
-            schema_fields['topic'] = fields.Nested(TopicSchema)
+    dept_schema = DepartmentSchema(many=True)
 
-        if 'unit' in embed:
-            schema_fields['unit'] = fields.Nested(UnitSchema)
+    return jsonify({'departments': dept_schema.dump(departments).data})
 
-        if 'contexts' in embed:
-            schema_fields['contexts'] = fields.Nested(TopicSchema, many=True)
 
-    Schema = SchemaFactory(UnitTopic, schema_fields)
-    schema = Schema(many=True)
+@api.route("/institutions/", methods=['GET'])
+def get_institutions():
+    institutions = Institution.query.\
+    filter(Institution.uri != "admin").all()
 
-    return jsonify({'unit_topics': schema.dump(unit_topics).data})
+    inst_schema = InstitutionSchema(many=True)
 
-@api.route("/topic/<string:topic_id>")
-def topic(topic_id):
+    return jsonify({'institutions': inst_schema.dump(institutions).data})
 
-    topic = db.session.query(Topic).get(topic_id)
 
-    topic_schema = TopicSchema()
+@api.route("/<string:institution_url>", methods=['GET'])
+def institution_info(institution_url):
+    institution = Institution.query.filter(Institution.uri == institution_url).one()
+    inst_schema = InstitutionSchema()
 
-    return jsonify({'topic': topic_schema.dump(topic).data})
+    return jsonify(inst_schema.dump(institution).data)
 
-def fetch_categories(topic_name):
-    params = urllib.urlencode({
-        'action': 'query',
-        'prop': 'categories',
-        'format': 'json',
-        'clshow': '!hidden',
-        'cllimit': 'max',
-        'titles': unicode(topic_name).encode('utf-8'),
-        'indexpageids': True})
-    f = urllib.urlopen("http://en.wikipedia.org/w/api.php?{}".format(params))
-    responce = json.load(f)
-
-    pageid = responce['query']['pageids'][0]
-
-    if pageid != '-1':
-        page = responce['query']['pages'][pageid]
-
-        if 'categories' in page:
-            return page['categories']
-
-    return []
-
-def get_categories(topic):
-    fetched_categories = fetch_categories(topic.name)
-    category_names = map(lambda x: x['title'], fetched_categories)
-
-    if category_names:
-        existing_categories = Category.query.filter(Category.name.in_(category_names)).all()
-        existing_names = map(lambda x: x.name, existing_categories)
-
-        new_categories = [Category(name) for name in category_names if name not in existing_names]
-        map(db.session.add, new_categories)
-
-        return existing_categories + new_categories
-    else:
-        return []
-
-@api.route("/unit_topics/add", methods=['POST'])
-def add_unit_topic():
-
-    args = request.get_json()
-
-    topic_name = args["topic_name"]
-
-    topic = Topic.query.filter_by(name=topic_name).first()
-    is_new = False
-
-    # If topic doesn't exist, need to add it
-    if not topic:
-        is_new = True
-
-        if args.has_key("topic_description"): # Custom topic
-            topic = CustomTopic(name=topic_name)
-            topic.description = args["topic_description"]
-            # TODO: topic.keywords = request.form["keywords"].split(',')
-        else: # WP topic
-            topic = Topic(name=topic_name)
-            topic.categories = get_categories(topic)
-
-        db.session.add(topic)
-        db.session.flush() # So that we have access to id
-
-    unit_code = args["unit_code"]
-    unit = db.session.query(Unit).filter_by(code=unit_code).one()
-
-    unit_topic = UnitTopic(unit.id, topic.id)
-    unit.unit_topics.append(unit_topic)
-    db.session.add(unit)
-
-    db.session.commit()
-
-    return ''
-
-@api.route("/unit_topics/update", methods=['POST'])
-def update_unit_topic():
-    args = request.get_json()
-
-    unit_topic = db.session.query(UnitTopic).get(args['id'])
-
-    unit_topic.alias = args['alias']
-    unit_topic.is_assessed = args['is_assessed']
-    unit_topic.is_taught = args['is_taught']
-    unit_topic.is_applied = args['is_applied']
-
-    topic_ids = map(lambda x: x['id'], args['contexts'])
-    unit_topic.contexts = Topic.query.filter(Topic.id.in_(topic_ids)).all()
-
-    db.session.commit()
-
-    return ''
-
-@api.route("/unit_topics/remove", methods=['POST'])
-def remove_syllabus_item():
-
-    unit_topic_id = (request.get_json())['unit_topic_id']
-    unit_topic = db.session.query(UnitTopic).get(unit_topic_id)
-
-    db.session.delete(unit_topic)
-
-    # If topic doesn't relate to more units -- delete it as well
-    if len(unit_topic.topic.unit_topics) == 0:
-        db.session.delete(unit_topic.topic)
-
-    db.session.commit()
-
-    return ''
-
-@api.route("/graph")
-def units_graph():
-    topics = db.session.query(Topic).all()
-
-    raw_svg = request.args.has_key('svg')
-
-    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
-    for topic in topics:
-        topic_node = g.add_topic_node(topic)
-
-        for unit_topic in topic.unit_topics:
-            unit_node = g.add_unit_node(unit_topic.unit)
-            g.add_edge(unit_node, topic_node)
-
-    return svg_response(g.render_svg())
-
-@api.route("/graph/unit/<string:unit_code>")
-def unit_graph(unit_code):
-    unit = db.session.query(Unit).filter_by(code=unit_code).one()
-
-    raw_svg = request.args.has_key('svg')
-
-    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
-    unit_node = g.add_unit_node(unit, unit.code == unit_code)
-    for unit_topic in unit.unit_topics:
-        topic_node = g.add_topic_node(unit_topic.topic)
-        g.add_edge(unit_node, topic_node)
-
-        # Add related units
-        for related_unit_topic in unit_topic.topic.unit_topics:
-            related_unit_node = g.add_unit_node(related_unit_topic.unit)
-            g.add_edge(related_unit_node, topic_node)
-
-    addCategoryNodes(g, [ut.topic for ut in unit.unit_topics])
-
-    return svg_response(g.render_svg())
-
-
-@api.route("/graph/topic/<string:topic_id>")
-def topic_graph(topic_id):
-
-    topic = db.session.query(Topic).get(topic_id)
-
-    raw_svg = request.args.has_key('svg')
-    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
-    topic_node = g.add_topic_node(topic, True)
-    addCategoryNodes(g, [topic])
-
-    for unit_topic in topic.unit_topics:
-        unit_node = g.add_unit_node(unit_topic.unit)
-        g.add_edge(unit_node, topic_node)
-
-        for related_unit_topic in unit_topic.unit.unit_topics:
-            related_topic_node = g.add_topic_node(related_unit_topic.topic)
-            g.add_edge(unit_node, related_topic_node)
-
-        addCategoryNodes(g, [ut.topic for ut in unit_topic.unit.unit_topics])
-
-    return svg_response(g.render_svg())
-
-@api.route("/graph/category/<string:category_id>")
-def category_graph(category_id):
-
-    category = db.session.query(Category).get(category_id)
-
-    raw_svg = request.args.has_key('svg')
-    g = SyllabusGraph(current_app.config['GRAPH_STYLE_PATH'], raw_svg)
-
-    category_node = g.add_category_node(category, len(category.topics))
-
-    for topic in category.topics:
-        topic_node = g.add_topic_node(topic)
-        g.add_category_edge(category_node, topic_node)
-
-        for unit_topic in topic.unit_topics:
-            unit_node = g.add_unit_node(unit_topic.unit)
-            g.add_edge(unit_node, topic_node)
-
-    return svg_response(g.render_svg())

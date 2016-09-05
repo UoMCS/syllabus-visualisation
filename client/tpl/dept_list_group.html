@@ -1,0 +1,59 @@
+<div class="list-group">
+    <div ng-repeat="institute in institutions" class="list-group-item">
+        <div class="list-group-item">
+        <h2 ng-if="!institute.isEditing">{{institute.name}}</h2>
+        <span ng-if="institute.isEditing">
+            <input class="form-control" ng-model="institute.name" ng-click="stopevent($event);"/>
+            <input class="form-control" ng-model="institute.uri" ng-click="stopevent($event);"/>
+        </span>
+        <span ng-if="loggedin" class="editbuttons">
+            <span ng-if="!institute.isEditing">
+                <button type="button" class="btn btn-info btn-xs hiding" ng-click="edit(institute, $event)">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+                <button type="button" class="btn btn-danger btn-xs hiding" ng-click="remove_ins(institute, $event)">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </span>
+            <span ng-if="institute.isEditing">
+                <button type="button" class="btn btn-success btn-xs" ng-click="save_ins(institute, $event)">
+                    <span class="glyphicon glyphicon-floppy-saved"></span>
+                </button>
+                <button type="button" class="btn btn-danger btn-xs" ng-click="cancel(institute, $event)">
+                    <span class="glyphicon glyphicon-floppy-remove"></span>
+                </button>
+            </span>
+        </span>
+        </div>
+        <div ng-repeat="department in institute.departments" ng-click="setDepartment(department)" ui-sref="department.units_list({inst_uri:institute.uri, dept_uri:department.uri})" class="list-group-item">
+            <span ng-if="!department.isEditing" class="unit-name">
+                {{department.name}}
+            </span>
+            <span ng-if="department.isEditing">
+                <input class="form-control" ng-model="department.name" ng-click="stopevent($event);"/>
+                <input class="form-control" ng-model="department.uri" ng-click="stopevent($event);"/>
+            </span>
+            <span ng-if="loggedin" class="editbuttons">
+                <span ng-if="!department.isEditing">
+                    <button type="button" class="btn btn-info btn-xs hiding" ng-click="edit(department, $event)">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs hiding" ng-click="remove_dep(institute, department, $event)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </span>
+                <span ng-if="department.isEditing">
+                    <button type="button" class="btn btn-success btn-xs" ng-click="save_dep(institute, department, $event)">
+                        <span class="glyphicon glyphicon-floppy-saved"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs" ng-click="cancel(department, $event)">
+                        <span class="glyphicon glyphicon-floppy-remove"></span>
+                    </button>
+                </span>
+            </span>
+        </div>
+        <button ng-if="loggedin" ng-click="add_dep(institute)" class="list-group-item">Add department</div>
+    </div>
+    <div ng-if="contentLoaded && !institutions.length" class="no-topics alert alert-info">No institutions so far.</div>
+    <button ng-if="loggedin" ng-click="add_ins()" class="alert alert-info">Add institution</div>
+</div>

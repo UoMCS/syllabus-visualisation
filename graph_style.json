@@ -1,0 +1,58 @@
+{
+    "unit_default": {
+        "fixedsize": true,
+        "style": "filled", 
+        "width": 1.8, 
+        "height": 1.8, 
+        "fontname": "Helvetica",
+        "fontcolor": "white",
+        "shape": "doublecircle",
+        "color": "#255E69FF"
+    },
+    "unit_1": {
+        "inherit": "unit_default",
+        "color": "#8AB2B9FF" 
+    },
+    "unit_2": {
+        "inherit": "unit_default",
+        "color": "#4D828CFF" 
+    },
+    "unit_3": {
+        "inherit": "unit_default",
+        "color": "#0F454FFF" 
+    },
+    "unit_4": {
+        "inherit": "unit_default",
+        "color": "#012C34FF" 
+    },
+    "topic" : {
+        "style": "filled, rounded",
+        "fontname": "Helvetica",
+        "fontcolor": "white",
+        "color": "#2F3F73FF",
+        "shape" : "box"
+    },
+    "central_topic" : {
+        "inherit" : "topic",
+        "color" : "red"
+    },
+    "edge" : {
+        "color": "#00000040",
+        "headclip": true,
+        "tailclip": false
+    },
+    "category_edge" : {
+        "inherit" : "edge",
+        "style" : "invis",
+        "len" : 0.4
+    },
+    "category" : {
+        "fontname": "Helvetica",
+        "fontcolor": "white",
+        "fillcolor": "#432F75", 
+        "color": "#230439",
+        "style": "filled",
+        "fixedsize": true,
+        "shape": "circle"
+    }
+}

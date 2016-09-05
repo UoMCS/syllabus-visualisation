@@ -25,7 +25,7 @@ To install, do the following:
    ``` 
    babel -o client/js_dist/syllabus.js client/js 
    ```
-5. Create `server.cfg`, setting `SQLALCHEMY_DATABASE_URI` variable, which specifies the database to use**
+5. Run the init.py script which will guide through the process of creating the database, admin user and a `server.cfg` file, which specifies the database to use**
 
 For debugging, run:
 ``` 
@@ -38,15 +38,9 @@ Otherwise, for production, use uWSGI, and point it to the `app` from `server/ser
 
 (*) Graphviz should be compiled with GTS support enabled, otherwise graphs might look weird. In Ubuntu, the only way to do that is to install libgts dev libraries, and compile/install Graphiz manually. For OS X, use `--with-gts` homebrew flag when installing graphviz.
 
-(**) E.g. for SQLite database:
+(**) Various other configuration variables are available. Full list provided in [http://flask.pocoo.org/docs/0.10/config/#builtin-configuration-values](flask documentation).
 
-```
-SQLALCHEMY_DATABASE_URI = "sqlite:////Users/artur/syllabus.db"
-```
-
-Various other configuration variables are available. Full list provided in [http://flask.pocoo.org/docs/0.10/config/#builtin-configuration-values](flask documentation).
-
-# Creating initial database
+# Other ways of creating initial database
 
 `add_initial_data.py` script could be used to create initial database using the files from `initial_data` folder. For usage instructions, run
 

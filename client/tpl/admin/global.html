@@ -1,0 +1,10 @@
+<fieldset class="form-group">
+    <label for="institution_sel">Institution</label>
+    <ui-select ng-init="populate_insts()" id="institution_sel" ng-model="ctrl.instsel" theme="bootstrap" on-select="populate_depts($select.selected.uri)">
+        <ui-select-match placeholder="Select institution">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="inst in where.insts | filter: $select.search">
+            <span ng-bind-html="inst.name | highlight: $select.search"></span>
+        </ui-select-choices>
+    </ui-select>
+</fieldset>
+<ng-include src="'/tpl/admin/department.html'"></ng-include>
