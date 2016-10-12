@@ -1,7 +1,64 @@
-<div class="list-group">
-    <a ng-repeat="unit in units" ui-sref="unit.topics({unit_code:unit.code})" class="list-group-item">
-        <span class="unit-code">{{unit.code}}</span>
-        <span class="unit-name">{{unit.name}}</span>
-        <span class="badge">{{unit.num_topics}}</span>
-    </a>
+<div id="unit-list">
+    <table class="table table-hover">
+        <tr>
+            <th class="name-column">Level</th>
+            <th class="name-column">Code</th>
+            <th class="name-column">Name</th>
+            <th class="name-column">topics</th>
+            <th ng-if="loggedin" class="actions-column"></th>
+        </tr>
+        <tr dir-paginate="unit in units | itemsPerPage: config.itemsPerPage" pagination-id="units" total-items="totalUnits" ui-sref="department.unit.topics({unit_code:unit.code})">
+            <td class="name-column" ui-sref="department.unit.topics({unit_code:unit.code})">
+                <span ng-if="!unit.isEditing">
+                    {{ unit.level }}
+                </span>
+                <span ng-if="unit.isEditing">
+                    <input class="form-control" ng-model="unit.level" ng-click="$event.stopPropagation();"/>
+                </span>
+            </td>
+            <td class="name-column" ui-sref="department.unit.topics({unit_code:unit.code})">
+                <span ng-if="!unit.isEditing">
+                    {{ unit.code }}
+                </span>
+                <span ng-if="unit.isEditing">
+                    <input class="form-control" ng-model="unit.code" ng-click="$event.stopPropagation();"/>
+                </span>
+            </td>
+            <td class="name-column" ui-sref="department.unit.topics({unit_code:unit.code})">
+                <span ng-if="!unit.isEditing">
+                    {{ unit.name }}
+                </span>
+                <span ng-if="unit.isEditing">
+                    <input class="form-control" ng-model="unit.name" ng-click="$event.stopPropagation();"/>
+                </span>
+            </td>
+            <td class="name-column" ui-sref="department.unit.topics({unit_code:unit.code})">
+                {{ unit.num_topics }}
+            </td>
+
+            <td ng-if="loggedin" class="actions-column">
+                <span ng-if="!unit.isEditing">
+                    <button type="button" class="btn btn-info btn-xs hiding" ng-click="$event.stopPropagation(); edit(unit)">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs hiding" ng-click="$event.stopPropagation(); remove(unit)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </span>
+                <span ng-if="unit.isEditing">
+                    <button type="button" class="btn btn-success btn-xs" ng-click="$event.stopPropagation(); save(unit)">
+                        <span class="glyphicon glyphicon-floppy-saved"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs" ng-click="$event.stopPropagation(); cancel(unit)">
+                        <span class="glyphicon glyphicon-floppy-remove"></span>
+                    </button>
+                </span>
+            </td>
+        </tr>
+    </table>
+    <div ng-if="contentLoaded && !units.length" class="no-topics alert alert-info">No units so far. :-(</div>
+
+    <dir-pagination-controls pagination-id="units" on-page-change="fetchUnitsLimit(config.itemsPerPage * (newPageNumber-1))"></dir-pagination-controls>
+
+    <button ng-if="loggedin" ng-click="add()" class="alert alert-info">Add unit</button>
 </div>

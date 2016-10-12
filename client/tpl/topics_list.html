@@ -1,0 +1,73 @@
+<div id="topic-list">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" data-target="#local-tab">Local</a></li>
+        <li><a data-toggle="tab" data-target="#wiki-tab">Wikipedia</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="local-tab" class="tab-pane fade in active">
+            <form>
+                <div class="form-group">
+                    <label for="query-lines">Filters</label>
+                    <button type="button" class="btn btn-success btn-xs" ng-click="addQueryLine()">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <div id="query-lines" class="form-inline" ng-repeat="queryline in querylines">
+                        <select class="selectpicker" data-width="80px" ng-model="queryline.is"
+                                                                       ng-options="o.v as o.n for o in [{ n: 'Is', v: true}, { n: 'Is not', v: false }]">
+                        </select>
+                        <select multiple class="selectpicker" ng-model="queryline.taught">
+                            <option>taught</option>
+                            <option>assessed</option>
+                            <option>applied</option>
+                        </select>
+                        at level(s)
+                        <input type="text" class="form-control" pattern="(\d+)(,\s*\d+)*" title="Comma seperated list of levels" ng-model="queryline.levels" placeholder="(optional)">
+                        <button type="button" class="btn btn-danger btn-xs" ng-click="removeQueryLine($index)">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" ng-click="submitQuery(0)">Submit</button>
+            </form>
+        </div>
+
+        <div id="wiki-tab" class="tab-pane fade">
+            <div class="input-group">
+                <input id="query" type="text" 
+                                  class="form-control form-control ui-select-toggle" 
+                                  ng-model="query" 
+                                  typeahead="suggestion for suggestion in wpSuggestions($viewValue)" 
+                                  style="text-align: left;" 
+                                  placeholder="Search">
+                </input>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" data-loading-text="Searching..." ng-click="wpSearch()">
+                        <span class="glyphicon glyphicon-search"></span> Search
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <table class="table table-hover">
+        <tr>
+            <th class="name-column">Name</th>
+            <th class="name-column">units</th>
+        </tr>
+
+        <tr dir-paginate="topic in topics | itemsPerPage: config.itemsPerPage" 
+            pagination-id="topics" 
+            total-items="totalTopics" 
+            ui-sref="department.topic({topic_id: topic.id})">
+            <td class="name-column">{{ topic.title }}</td>
+            <td class="name-column">
+                <a ng-repeat="unit in topic.units" ui-sref="department.unit.topics({unit_code: unit})"
+                    class="label label-default unit" ng-click="$event.stopPropagation()">
+                    {{ unit }}
+                </a>
+            </td>
+        </tr>
+    </table>
+    <div ng-if="contentLoaded && !topics.length" class="no-topics alert alert-info">No topics so far.</div>
+    <dir-pagination-controls id="pagination-controls" pagination-id="topics" on-page-change="getNextPage(config.itemsPerPage * (newPageNumber-1))"></dir-pagination-controls>
+</div>

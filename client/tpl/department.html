@@ -1,0 +1,6 @@
+<li role="presentation" ui-sref-active="active"><a ui-sref="department.units_list">Units list</a></li>
+<li role="presentation" ui-sref-active="active"><a ui-sref="department.topics_list">Topics list</a></li>
+<li role="presentation" ui-sref-active="active"><a ui-sref="department.graph.all">Main graph</a></li>
+<li ng-if="!loggedin" role="presentation" ui-sref-active="active"><a ng-click="openLoginForm()">Login</a></li>
+<li ng-if="loggedin" role="presentation" ui-sref-active="active"><a ng-click="logout()">Logout</a></li>
+<li ng-if="loggedin" role="presentation" ui-sref-active="active"><a ui-sref="department.admin">Admin</a></li>

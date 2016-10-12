@@ -11,3 +11,7 @@ SQLAlchemy==1.0.8
 Werkzeug==0.10.4
 requests==2.7.0
 lxml==3.2.1
+sqlalchemy-utils==0.32.9
+flask_login==0.4.0
+flask_principal==0.3.2
+flask_bcrypt==0.7.1

@@ -1,12 +1,13 @@
 <div class="container">
-    <div class="page-header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" ui-sref-active="active"><a ui-sref="units_list">Units list</a></li>
-                <li role="presentation" ui-sref-active="active"><a ui-sref="graph.all">Main graph</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">Syllabus visualisation</h3>
-    </div>
-    <div ui-view class="content"></div>
-</div> <!-- /.container -->
+   <div class="page-header clearfix">
+       <nav>
+           <ul ui-view="nav-menu" class="nav nav-pills pull-right">
+               <li ng-if="!loggedin" role="presentation" ui-sref-active="active"><a ng-click="openLoginForm()">Login admin</a></li>
+               <li ng-if="loggedin" role="presentation" ui-sref-active="active"><a ng-click="logout()">Logout</a></li>
+               <li ng-if="loggedin" role="presentation" ui-sref-active="active"><a ui-sref="admin">Admin</a></li>
+           </ul>
+       </nav>
+       <h3 class="text-muted">Syllabus visualisation</h3>
+   </div>
+   <div ui-view class="content"></div>
+</div>
